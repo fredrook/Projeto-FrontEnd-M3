@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    "postgresql://postgres:70461E3q6IF3KiwDf7ov@containers-us-west-38.railway.app:5620/railway",
+  baseURL: "https://kenziemed-production.up.railway.app",
   timeout: 5000, // 5 segundos
 });
 

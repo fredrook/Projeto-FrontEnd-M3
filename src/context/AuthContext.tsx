@@ -12,8 +12,6 @@ import { IUser } from "../interface/IUser";
 import { toast } from "react-toastify";
 import { IPost } from "../interface/IPost";
 import api from "../services/api";
-import iconerror from "../assets/img/icons/errorico.svg";
-import sucessicon from "../assets/img/icons/sucessicon.svg";
 import { IError } from "../interface/IError";
 import { IEditProfile } from "../interface/IEditProfile";
 
@@ -50,50 +48,39 @@ const AuthProvider = ({ children }: IAuthProvider) => {
   }, []);
 
   const SignIn = async (data: IUserLogin) => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const response = await api.post("/login/users", data);
+      const user = response.data.user;
+      const userId = response.data.userId;
+      const token = response.data.token;
 
-    setTimeout(async () => {
-      try {
-        const res = await api.post<IPost>("/login", data);
-        const { user: userResponse } = res.data;
-        const token = JSON.stringify(res.data.accessToken)?.replace(/"/gi, "");
-        setUser(userResponse);
+      localStorage.setItem("@context-KenzieMed:user", JSON.stringify(user));
+      localStorage.setItem("@context-KenzieMed:userId", userId);
+      localStorage.setItem("@context-KenzieMed:token", token);
 
-        localStorage.setItem(
-          "@context-KenzieMed:user",
-          JSON.stringify(userResponse)
-        );
-        localStorage.setItem(
-          "@context-KenzieMed:userId",
-          JSON.stringify(res.data.user.id)
-        );
-        localStorage.setItem("@context-KenzieMed:token", token);
+      setUser(user);
+      setLogin(true);
+      setIsLoading(false);
 
-        setLogin(true);
+      toast.success("Login realizado com sucesso!", {
+        theme: "colored",
+      });
 
-        const state = location.state as ICustomizedState;
+      const state = location.state as ICustomizedState;
 
-        let toNavigate = "/dashboard";
+      let toNavigate = "/dashboard";
 
-        if (state) {
-          toNavigate = state.from;
-        }
-        navigate(toNavigate, { replace: true });
-        setIsLoading(false);
-        toast.success("Login efetuado com sucesso!", {
-          theme: "colored",
-          icon: <img src={sucessicon} alt="icon sucess" />,
-        });
-      } catch (error) {
-        const err = error as AxiosError;
-        toast.error("Erro ao efetuar Login!", {
-          theme: "colored",
-          icon: <img src={iconerror} alt="icon error" />,
-        });
-      } finally {
-        setIsLoading(false);
+      if (state && state.from) {
+        toNavigate = state.from;
       }
-    }, 2000);
+      navigate(toNavigate, { replace: true });
+    } catch (error) {
+      setIsLoading(false);
+      toast.error("Ops, Algo deu errado", {
+        theme: "colored",
+      });
+    }
   };
 
   const onSubmitRegister = async (data: IUser) => {
@@ -101,19 +88,18 @@ const AuthProvider = ({ children }: IAuthProvider) => {
       ...data,
       img: "",
     };
+    console.log(newData);
     await api
       .post<IPost>("/users", newData)
       .then((response) => {
         toast.success("Cadastro efetuado com sucesso", {
           theme: "colored",
-          icon: <img src={sucessicon} alt="icon sucess" />,
         });
         navigate("/login");
       })
       .catch((error: AxiosError<IError>) => {
         toast.error("Ops, Algo deu errado", {
           theme: "colored",
-          icon: <img src={iconerror} alt="icon error" />,
         });
       });
   };
@@ -125,7 +111,6 @@ const AuthProvider = ({ children }: IAuthProvider) => {
     if (ArrayfilterDoctors.length === 0) {
       toast.error("Não conseguimos encontrar essa especialidade..", {
         theme: "colored",
-        icon: <img src={iconerror} alt="icon error" />,
       });
       setItemFilter(doctorsList);
     } else {
@@ -152,14 +137,12 @@ const AuthProvider = ({ children }: IAuthProvider) => {
       setUser(res.data);
       toast.success("Dados alterados com sucesso!", {
         theme: "colored",
-        icon: <img src={sucessicon} alt="icon sucess" />,
       });
       navigate("/dashboard", { replace: true });
     } catch (error) {
       const err = error as AxiosError<IError>;
       toast.error("Algo deu errado! Tente novamente!", {
         theme: "colored",
-        icon: <img src={iconerror} alt="icon error" />,
       });
     }
   };

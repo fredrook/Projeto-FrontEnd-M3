@@ -12,10 +12,7 @@ const FormEditUser = () => {
 
   const formSchema = yup.object().shape({
     name: yup.string().trim(),
-    email: yup
-      .string()
-      .trim()
-      .email("Email inválido!"),
+    email: yup.string().trim().email("Email inválido!"),
     password: yup
       .string()
       .trim()
@@ -32,7 +29,6 @@ const FormEditUser = () => {
     age: yup.string().trim(),
     sex: yup.string().trim(),
     address: yup.string().trim(),
-    contact: yup.string().trim(),
     img: yup.string().trim(),
   });
 
@@ -142,8 +138,8 @@ const FormEditUser = () => {
           <option value="" disabled>
             Sexo
           </option>
-          <option value={"M"}>Masculino</option>
-          <option value={"F"}>Femenino</option>
+          <option value={"Masculino"}>Masculino</option>
+          <option value={"Femenino"}>Femenino</option>
         </select>
         {errors?.sex && (
           <span className="errorRegister">
@@ -158,20 +154,6 @@ const FormEditUser = () => {
           className="inputRegister"
           defaultValue={`${user.address}`}
           {...register("address")}
-        />
-        {errors?.address && (
-          <span className="errorRegister">
-            <FiAlertCircle />
-            {errors.address.message}
-          </span>
-        )}
-        <label htmlFor="contact">Contato</label>
-        <input
-          type="text"
-          id="contact"
-          className="inputRegister"
-          defaultValue={`${user.contact}`}
-          {...register("contact")}
         />
         {errors?.address && (
           <span className="errorRegister">

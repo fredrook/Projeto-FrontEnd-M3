@@ -10,7 +10,6 @@ import { IError } from "../../interface/IError";
 import { ICardDoctorProps } from "../../interface/ICardDoctorProps";
 import { ContainerDoctors, ListDoctors } from "./cardDoctorsStyle";
 import { toast } from "react-toastify";
-import iconerror from "../../assets/img/icons/errorico.svg";
 
 const CardDoctors = ({ doctorsList }: ICardDoctorProps) => {
   const {
@@ -41,8 +40,7 @@ const CardDoctors = ({ doctorsList }: ICardDoctorProps) => {
       const err = error as AxiosError<IError>;
       toast.error("Algo deu errado! Tente novamente!", {
         theme: "colored",
-        icon: <img src={iconerror} alt="icon error" />
-      })
+      });
     }
   };
 
@@ -52,47 +50,25 @@ const CardDoctors = ({ doctorsList }: ICardDoctorProps) => {
 
   return (
     <ContainerDoctors>
-      <div className="card-doctors-header">
-        <h2>Corpo Clínico</h2>
-        {itemFilter.length > 0 && (
-          <button
-            onClick={() => {
-              setItemFilter([]);
-            }}
-          >
-            <BsArrowLeftShort /> Voltar
-          </button>
-        )}
-      </div>
-      {doctorsList ? (
-        <ListDoctors>
-          {doctorsList.map((doctor) => (
-            <li
-              key={doctor.id}
-              onClick={() => {
-                setDoctorSchedule(doctor.schedules);
-                setDoctor(doctor);
-                navigate(`/corpoclinico/doctor:${doctor.id}`);
-              }}
-            >
-              <div className="containerHeader">
-                <h2>{doctor.name}</h2>
-                <button>
-                  <BsCalendar3 />
-                </button>
-              </div>
-              <span>CRM - {doctor.CRM}</span>
-              <h3>{doctor.speciality}</h3>
-              <h3>
-                <MdOutlinePlace />
-                {doctor.address}
-              </h3>
-            </li>
-          ))}
-        </ListDoctors>
-      ) : (
-        <p>Nenhum médico cadastrado nessa especialidade</p>
-      )}
+      <ListDoctors>
+        {doctorsList.map((doctor) => (
+          <div key={doctor.id}>
+            {/* Renderizar os dados do médico aqui */}
+            <div className="containerHeader">
+              <h2>{doctor.name}</h2>
+              <button>
+                <BsCalendar3 />
+              </button>
+            </div>
+            <span>CRM - {doctor.CRM}</span>
+            <h3>{doctor.speciality}</h3>
+            <h3>
+              <MdOutlinePlace />
+              {doctor.address}
+            </h3>
+          </div>
+        ))}
+      </ListDoctors>
     </ContainerDoctors>
   );
 };
